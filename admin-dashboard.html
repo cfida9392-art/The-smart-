@@ -456,14 +456,25 @@
     }
 
     function loadAttendance() {
-      // Fill class dropdown
+      // Fill class dropdown from Classes table + unique classes from Students
       const classSelect = document.getElementById('att-class');
-      if (classSelect && classSelect.options.length <= 1) {
-        classSelect.innerHTML = '<option value="">Select Class</option>';
+      if (classSelect) {
+        const classSet = new Set();
+        // From classes table
         SchoolDB.getClasses().forEach(c => {
+          if (c.name) classSet.add(c.name);
+        });
+        // From actual students (important!)
+        SchoolDB.getStudents().forEach(s => {
+          if (s.class) classSet.add(s.class);
+        });
+
+        const sortedClasses = Array.from(classSet).sort();
+        classSelect.innerHTML = '<option value="">Select Class</option>';
+        sortedClasses.forEach(cName => {
           const opt = document.createElement('option');
-          opt.value = c.name;
-          opt.textContent = c.name;
+          opt.value = cName;
+          opt.textContent = cName;
           classSelect.appendChild(opt);
         });
       }
@@ -479,14 +490,15 @@
           <td>${s.class}</td>
           <td>
             <div style="display:flex;align-items:center;gap:0.5rem;">
-              <div class="progress" style="flex:1;max-width:100px;"><div class="progress-bar" style="width:${s.attendance}%"></div></div>
-              ${s.attendance}%
+              <div class="progress" style="flex:1;max-width:100px;"><div class="progress-bar" style="width:${s.attendance || 0}%"></div></div>
+              ${s.attendance || 0}%
             </div>
           </td>
-          <td><span class="badge ${s.attendance >= 90 ? 'badge-success' : s.attendance >= 75 ? 'badge-warning' : 'badge-danger'}">${s.attendance >= 90 ? 'Excellent' : s.attendance >= 75 ? 'Good' : 'Low'}</span></td>
+          <td><span class="badge ${(s.attendance || 0) >= 90 ? 'badge-success' : (s.attendance || 0) >= 75 ? 'badge-warning' : 'badge-danger'}">${(s.attendance || 0) >= 90 ? 'Excellent' : (s.attendance || 0) >= 75 ? 'Good' : 'Low'}</span></td>
         </tr>
       `).join('');
     }
+
 
     // ========== ATTENDANCE SHEET (Admin) ==========
     let currentSheetStudents = [];
@@ -500,12 +512,15 @@
         return;
       }
 
-      currentSheetStudents = SchoolDB.getStudents().filter(s => s.class === className);
+      currentSheetStudents = SchoolDB.getStudents().filter(s => 
+        String(s.class || '').trim() === String(className).trim()
+      );
       if (currentSheetStudents.length === 0) {
-        document.getElementById('att-sheet-body').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-400);">No students found in this class</td></tr>';
+        document.getElementById('att-sheet-body').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-400);">No students found in this class. Check if student Class field matches exactly.</td></tr>';
         document.getElementById('att-summary').innerHTML = '';
         return;
       }
+
 
       const existing = SchoolDB.getAttendanceForClass(date, className);
       currentRecords = existing ? { ...existing.records } : {};

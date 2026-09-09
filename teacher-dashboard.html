@@ -210,9 +210,14 @@
     document.getElementById('profile-phone').textContent = session.phone || '-';
     document.getElementById('profile-classes').textContent = (session.classes || []).join(', ') || '-';
 
-    // Fill class dropdown
+    // Fill class dropdown from assigned classes + any student classes
     const classSelect = document.getElementById('att-class');
-    (session.classes || []).forEach(c => {
+    const classSet = new Set(session.classes || []);
+    SchoolDB.getStudents().forEach(s => {
+      if (s.class) classSet.add(s.class);
+    });
+    classSelect.innerHTML = '<option value="">Select Class</option>';
+    Array.from(classSet).sort().forEach(c => {
       const opt = document.createElement('option');
       opt.value = c;
       opt.textContent = c;
@@ -220,6 +225,7 @@
     });
     // Set today's date
     document.getElementById('att-date').value = new Date().toISOString().split('T')[0];
+
 
     document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -275,12 +281,15 @@
         return;
       }
 
-      currentSheetStudents = SchoolDB.getStudents().filter(s => s.class === className);
+      currentSheetStudents = SchoolDB.getStudents().filter(s => 
+        String(s.class || '').trim() === String(className).trim()
+      );
       if (currentSheetStudents.length === 0) {
-        document.getElementById('att-sheet-body').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-400);">No students found in this class</td></tr>';
+        document.getElementById('att-sheet-body').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-400);">No students found in this class. Check if student Class field matches exactly.</td></tr>';
         document.getElementById('att-summary').innerHTML = '';
         return;
       }
+
 
       // Load existing records if any
       const existing = SchoolDB.getAttendanceForClass(date, className);
