@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teachers & Staff | THE SMART MODERN PUBLIC SCHOOL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">SM</div>
+          <div class="logo-text">
+            <span class="school-name">THE SMART MODERN PUBLIC SCHOOL</span>
+            <span class="tagline">Learn Today, Lead Tomorrow</span>
+          </div>
+        </a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="academics.html">Academics</a></li>
+          <li><a href="teachers.html" class="active">Teachers</a></li>
+          <li><a href="admissions.html">Admissions</a></li>
+          <li><a href="notices.html">Notices</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="student-login.html" class="btn btn-sm btn-outline">Student</a>
+          <a href="teacher-login.html" class="btn btn-sm btn-secondary">Teacher</a>
+          <a href="admin-login.html" class="btn btn-sm btn-primary">Admin</a>
+        </div>
+        <button class="mobile-toggle"><i class="fas fa-bars"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Teachers & Staff</h1>
+      <p>Meet our dedicated educators</p>
+      <div class="breadcrumb"><a href="index.html">Home</a> / Teachers & Staff</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge">Faculty</span>
+        <h2>Our Expert Teachers</h2>
+        <p>Passionate educators committed to bringing out the best in every student.</p>
+      </div>
+      <div class="teachers-grid" id="teachers-grid"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;">
+        <p>&copy; 2026 THE SMART MODERN PUBLIC SCHOOL. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const teachers = SchoolDB.getTeachers();
+      document.getElementById('teachers-grid').innerHTML = teachers.map(t => `
+        <div class="teacher-card">
+          <div class="teacher-photo">${t.photo || '👨‍🏫'}</div>
+          <div class="teacher-info">
+            <h3>${t.name}</h3>
+            <div class="subject">${t.subject}</div>
+            <p>${t.qualification} • ${t.experience}</p>
+          </div>
+        </div>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

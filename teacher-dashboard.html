@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard | THE SMART MODERN PUBLIC SCHOOL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon" style="width:40px;height:40px;font-size:1rem;">SM</div>
+          <div class="logo-text">
+            <span class="school-name" style="font-size:0.85rem;">THE SMART MODERN</span>
+            <span class="tagline" style="font-size:0.65rem;">PUBLIC SCHOOL</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="tch-avatar">T</div>
+        <div class="user-info">
+          <h4 id="tch-name">Teacher</h4>
+          <span id="tch-subject">Subject</span>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active" data-section="profile"><i class="fas fa-user"></i> Profile</a></li>
+        <li><a href="#" data-section="classes"><i class="fas fa-school"></i> Assigned Classes</a></li>
+        <li><a href="#" data-section="students"><i class="fas fa-user-graduate"></i> Student List</a></li>
+        <li><a href="#" data-section="attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+        <li><a href="#" data-section="homework"><i class="fas fa-book"></i> Homework</a></li>
+        <li><a href="#" data-section="marks"><i class="fas fa-edit"></i> Exam Marks</a></li>
+        <li><a href="#" data-section="notices"><i class="fas fa-bullhorn"></i> Notices</a></li>
+        <li><a href="#" data-section="timetable"><i class="fas fa-clock"></i> Timetable</a></li>
+        <li><a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <h2 id="section-title">My Profile</h2>
+        <button class="btn btn-sm btn-outline" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+      </div>
+      <div class="dashboard-content">
+        <div id="section-profile" class="dashboard-section">
+          <div class="profile-card">
+            <div class="profile-avatar" id="profile-avatar">T</div>
+            <h3 id="profile-name">Teacher Name</h3>
+            <p style="color:var(--primary);font-weight:600;" id="profile-id">ID</p>
+            <div class="profile-info">
+              <div class="info-item"><label>Subject</label><p id="profile-subject">-</p></div>
+              <div class="info-item"><label>Qualification</label><p id="profile-qual">-</p></div>
+              <div class="info-item"><label>Experience</label><p id="profile-exp">-</p></div>
+              <div class="info-item"><label>Email</label><p id="profile-email">-</p></div>
+              <div class="info-item"><label>Phone</label><p id="profile-phone">-</p></div>
+              <div class="info-item"><label>Assigned Classes</label><p id="profile-classes">-</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-classes" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Assigned Classes</h3></div>
+            <div class="panel-body" id="assigned-classes"></div>
+          </div>
+        </div>
+
+        <div id="section-students" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Students in My Classes</h3></div>
+            <div class="panel-body table-responsive">
+              <table>
+                <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Roll</th><th>Attendance</th></tr></thead>
+                <tbody id="students-list"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-attendance" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Attendance Management</h3></div>
+            <div class="panel-body">
+              <p style="color:var(--gray-500);margin-bottom:1rem;">View and monitor student attendance for your classes.</p>
+              <div class="table-responsive">
+                <table>
+                  <thead><tr><th>Student</th><th>Class</th><th>Attendance %</th><th>Status</th></tr></thead>
+                  <tbody id="att-list"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-homework" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Homework Management</h3>
+              <button class="btn btn-primary btn-sm" onclick="openAddHW()"><i class="fas fa-plus"></i> Assign Homework</button>
+            </div>
+            <div class="panel-body" id="hw-list"></div>
+          </div>
+        </div>
+
+        <div id="section-marks" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Exam Marks Overview</h3></div>
+            <div class="panel-body">
+              <p style="color:var(--gray-500);">Exam marks are managed centrally. Contact admin for bulk updates. Below is a summary of recent results for students in your classes.</p>
+              <div id="marks-summary" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-notices" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>School Notices</h3></div>
+            <div class="panel-body" id="tch-notices"></div>
+          </div>
+        </div>
+
+        <div id="section-timetable" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Timetable Reference</h3></div>
+            <div class="panel-body">
+              <p style="color:var(--gray-500);">Refer to the class-wise timetable available with the school office. Your assigned classes determine your teaching periods.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Homework Modal -->
+  <div class="modal-overlay" id="modal-hw">
+    <div class="modal">
+      <div class="modal-header"><h3>Assign Homework</h3><button class="modal-close" onclick="closeModal('modal-hw')">&times;</button></div>
+      <div class="modal-body">
+        <form id="add-hw-form">
+          <div class="form-group"><label>Class</label><input name="class" class="form-control" placeholder="Class 10-A" required></div>
+          <div class="form-group"><label>Subject</label><input name="subject" class="form-control" required></div>
+          <div class="form-group"><label>Title / Description</label><input name="title" class="form-control" required></div>
+          <div class="form-group"><label>Due Date</label><input name="dueDate" type="date" class="form-control" required></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-hw')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveHW()">Assign</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (!protectPage('teacher')) throw new Error('Unauthorized');
+    const session = SchoolDB.getSession();
+
+    document.getElementById('tch-name').textContent = session.name;
+    document.getElementById('tch-subject').textContent = session.subject;
+    document.getElementById('tch-avatar').textContent = session.name.charAt(0);
+    document.getElementById('profile-avatar').textContent = session.name.charAt(0);
+    document.getElementById('profile-name').textContent = session.name;
+    document.getElementById('profile-id').textContent = session.id;
+    document.getElementById('profile-subject').textContent = session.subject || '-';
+    document.getElementById('profile-qual').textContent = session.qualification || '-';
+    document.getElementById('profile-exp').textContent = session.experience || '-';
+    document.getElementById('profile-email').textContent = session.email || '-';
+    document.getElementById('profile-phone').textContent = session.phone || '-';
+    document.getElementById('profile-classes').textContent = (session.classes || []).join(', ') || '-';
+
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        const section = link.dataset.section;
+        document.querySelectorAll('.dashboard-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('section-' + section).classList.remove('hidden');
+        document.getElementById('section-title').textContent = link.textContent.trim();
+        if (section === 'classes') loadClasses();
+        if (section === 'students' || section === 'attendance') loadStudents();
+        if (section === 'homework') loadHW();
+        if (section === 'marks') loadMarks();
+        if (section === 'notices') loadNotices();
+      });
+    });
+
+    function loadClasses() {
+      const classes = session.classes || [];
+      document.getElementById('assigned-classes').innerHTML = classes.length ? classes.map(c => `
+        <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:0.5rem;">
+          <strong>${c}</strong>
+        </div>
+      `).join('') : '<p class="empty-state">No classes assigned yet.</p>';
+    }
+
+    function loadStudents() {
+      const myClasses = session.classes || [];
+      const students = SchoolDB.getStudents().filter(s => myClasses.some(c => s.class === c) || myClasses.length === 0);
+      const rows = students.map(s => `
+        <tr>
+          <td>${s.id}</td>
+          <td>${s.name}</td>
+          <td>${s.class}</td>
+          <td>${s.rollNo}</td>
+          <td>${s.attendance}%</td>
+        </tr>
+      `).join('');
+      document.getElementById('students-list').innerHTML = rows || '<tr><td colspan="5">No students found</td></tr>';
+      document.getElementById('att-list').innerHTML = students.map(s => `
+        <tr>
+          <td>${s.name}</td>
+          <td>${s.class}</td>
+          <td>${s.attendance}%</td>
+          <td><span class="badge ${s.attendance >= 90 ? 'badge-success' : s.attendance >= 75 ? 'badge-warning' : 'badge-danger'}">${s.attendance >= 90 ? 'Excellent' : s.attendance >= 75 ? 'Good' : 'Low'}</span></td>
+        </tr>
+      `).join('') || '<tr><td colspan="4">No data</td></tr>';
+    }
+
+    function loadHW() {
+      const hw = SchoolDB.getHomework().filter(h => h.assignedBy === session.name || true);
+      document.getElementById('hw-list').innerHTML = hw.map(h => `
+        <div style="padding:1rem;border-bottom:1px solid var(--gray-100);">
+          <strong>${h.subject}: ${h.title}</strong><br>
+          <small style="color:var(--gray-500);">${h.class} • Due: ${h.dueDate}</small>
+        </div>
+      `).join('') || '<p class="empty-state">No homework assigned.</p>';
+    }
+
+    function loadMarks() {
+      const results = SchoolDB.getResults();
+      document.getElementById('marks-summary').innerHTML = results.slice(0, 5).map(r => {
+        const stu = SchoolDB.getStudents().find(s => s.id === r.studentId);
+        return `<div style="padding:0.75rem 0;border-bottom:1px solid var(--gray-100);">${stu ? stu.name : r.studentId} — ${r.exam}: <strong>${r.percentage}%</strong></div>`;
+      }).join('') || '<p class="empty-state">No results data.</p>';
+    }
+
+    function loadNotices() {
+      document.getElementById('tch-notices').innerHTML = SchoolDB.getNotices().map(n => `
+        <div style="padding:0.85rem 0;border-bottom:1px solid var(--gray-100);">
+          <strong>${n.title}</strong><br>
+          <p style="margin:0.3rem 0;color:var(--gray-600);font-size:0.9rem;">${n.content}</p>
+          <small style="color:var(--gray-400);">${formatDate(n.date).full}</small>
+        </div>
+      `).join('');
+    }
+
+    function openAddHW() { openModal('modal-hw'); }
+    function saveHW() {
+      const form = document.getElementById('add-hw-form');
+      const hw = SchoolDB.getHomework();
+      hw.unshift({
+        id: SchoolDB.generateId('HW'),
+        class: form.class.value,
+        subject: form.subject.value,
+        title: form.title.value,
+        dueDate: form.dueDate.value,
+        assignedBy: session.name
+      });
+      SchoolDB.saveHomework(hw);
+      closeModal('modal-hw');
+      form.reset();
+      loadHW();
+    }
+  </script>
+</body>
+</html>

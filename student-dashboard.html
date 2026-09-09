@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | THE SMART MODERN PUBLIC SCHOOL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon" style="width:40px;height:40px;font-size:1rem;">SM</div>
+          <div class="logo-text">
+            <span class="school-name" style="font-size:0.85rem;">THE SMART MODERN</span>
+            <span class="tagline" style="font-size:0.65rem;">PUBLIC SCHOOL</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="stu-avatar">S</div>
+        <div class="user-info">
+          <h4 id="stu-name">Student</h4>
+          <span id="stu-class">Class</span>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active" data-section="profile"><i class="fas fa-user"></i> Profile</a></li>
+        <li><a href="#" data-section="attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+        <li><a href="#" data-section="timetable"><i class="fas fa-clock"></i> Timetable</a></li>
+        <li><a href="#" data-section="homework"><i class="fas fa-book"></i> Homework</a></li>
+        <li><a href="#" data-section="results"><i class="fas fa-chart-line"></i> Exam Results</a></li>
+        <li><a href="#" data-section="notices"><i class="fas fa-bullhorn"></i> Notices</a></li>
+        <li><a href="#" data-section="events"><i class="fas fa-calendar-alt"></i> Events</a></li>
+        <li><a href="#" data-section="fees"><i class="fas fa-money-bill"></i> Fees</a></li>
+        <li><a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <h2 id="section-title">My Profile</h2>
+        <button class="btn btn-sm btn-outline" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+      </div>
+      <div class="dashboard-content">
+        <div id="section-profile" class="dashboard-section">
+          <div class="profile-card">
+            <div class="profile-avatar" id="profile-avatar">S</div>
+            <h3 id="profile-name">Student Name</h3>
+            <p style="color:var(--primary);font-weight:600;" id="profile-id">ID</p>
+            <div class="profile-info">
+              <div class="info-item"><label>Class & Section</label><p id="profile-class">-</p></div>
+              <div class="info-item"><label>Roll No</label><p id="profile-roll">-</p></div>
+              <div class="info-item"><label>Date of Birth</label><p id="profile-dob">-</p></div>
+              <div class="info-item"><label>Parent / Guardian</label><p id="profile-parent">-</p></div>
+              <div class="info-item"><label>Phone</label><p id="profile-phone">-</p></div>
+              <div class="info-item"><label>Email</label><p id="profile-email">-</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-attendance" class="dashboard-section hidden">
+          <div class="stats-grid" style="margin-bottom:1.5rem;">
+            <div class="stat-card">
+              <div class="stat-icon green"><i class="fas fa-percentage"></i></div>
+              <div class="stat-info"><h3 id="att-percent">0%</h3><p>Overall Attendance</p></div>
+            </div>
+          </div>
+          <div class="panel"><div class="panel-body"><p>Your attendance is tracked regularly. Maintain above 75% for eligibility in exams.</p></div></div>
+        </div>
+
+        <div id="section-timetable" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Weekly Timetable</h3></div>
+            <div class="panel-body table-responsive">
+              <table id="timetable-table">
+                <thead><tr><th>Day</th><th>P1</th><th>P2</th><th>P3</th><th>Break</th><th>P4</th><th>P5</th><th>P6</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-homework" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Homework / Assignments</h3></div>
+            <div class="panel-body" id="homework-list"></div>
+          </div>
+        </div>
+
+        <div id="section-results" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Exam Results</h3></div>
+            <div class="panel-body" id="results-content"></div>
+          </div>
+        </div>
+
+        <div id="section-notices" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>School Notices</h3></div>
+            <div class="panel-body" id="stu-notices"></div>
+          </div>
+        </div>
+
+        <div id="section-events" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Upcoming Events</h3></div>
+            <div class="panel-body" id="stu-events"></div>
+          </div>
+        </div>
+
+        <div id="section-fees" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Fees Information</h3></div>
+            <div class="panel-body">
+              <p>Status: <span class="badge" id="fees-badge">-</span></p>
+              <p class="mt-2" style="color:var(--gray-500);">For fee payments and detailed statements, please contact the school accounts office or visit the campus.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (!protectPage('student')) throw new Error('Unauthorized');
+    const session = SchoolDB.getSession();
+
+    document.getElementById('stu-name').textContent = session.name;
+    document.getElementById('stu-class').textContent = session.class;
+    document.getElementById('stu-avatar').textContent = session.name.charAt(0);
+    document.getElementById('profile-avatar').textContent = session.name.charAt(0);
+    document.getElementById('profile-name').textContent = session.name;
+    document.getElementById('profile-id').textContent = session.id;
+    document.getElementById('profile-class').textContent = session.class + (session.section ? ' / ' + session.section : '');
+    document.getElementById('profile-roll').textContent = session.rollNo || '-';
+    document.getElementById('profile-dob').textContent = session.dob || '-';
+    document.getElementById('profile-parent').textContent = session.parentName || '-';
+    document.getElementById('profile-phone').textContent = session.phone || '-';
+    document.getElementById('profile-email').textContent = session.email || '-';
+    document.getElementById('att-percent').textContent = (session.attendance || 0) + '%';
+    document.getElementById('fees-badge').textContent = session.feesStatus || 'N/A';
+    document.getElementById('fees-badge').className = 'badge ' + (session.feesStatus === 'Paid' ? 'badge-success' : 'badge-warning');
+
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        const section = link.dataset.section;
+        document.querySelectorAll('.dashboard-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('section-' + section).classList.remove('hidden');
+        document.getElementById('section-title').textContent = link.textContent.trim();
+        if (section === 'timetable') loadTimetable();
+        if (section === 'homework') loadHomework();
+        if (section === 'results') loadResults();
+        if (section === 'notices') loadNotices();
+        if (section === 'events') loadEvents();
+      });
+    });
+
+    function loadTimetable() {
+      const tt = SchoolDB.getTimetable()[session.class] || SchoolDB.getTimetable()['Class 10-A'] || [];
+      document.querySelector('#timetable-table tbody').innerHTML = tt.map(row => `
+        <tr><td><strong>${row.day}</strong></td>${row.periods.map(p => `<td>${p}</td>`).join('')}</tr>
+      `).join('');
+    }
+
+    function loadHomework() {
+      const hw = SchoolDB.getHomework().filter(h => h.class === session.class);
+      document.getElementById('homework-list').innerHTML = hw.length ? hw.map(h => `
+        <div style="padding:1rem;border-bottom:1px solid var(--gray-100);">
+          <strong>${h.subject}: ${h.title}</strong><br>
+          <small style="color:var(--gray-500);">Due: ${h.dueDate} • By ${h.assignedBy}</small>
+        </div>
+      `).join('') : '<p class="empty-state">No homework assigned currently.</p>';
+    }
+
+    function loadResults() {
+      const result = SchoolDB.getResults().find(r => r.studentId === session.id);
+      if (!result) {
+        document.getElementById('results-content').innerHTML = '<p class="empty-state">No results available yet.</p>';
+        return;
+      }
+      document.getElementById('results-content').innerHTML = `
+        <h4>${result.exam}</h4>
+        <p>Overall: <strong>${result.percentage}%</strong></p>
+        <div class="table-responsive mt-2">
+          <table><thead><tr><th>Subject</th><th>Marks</th></tr></thead>
+          <tbody>${Object.entries(result.subjects).map(([sub, marks]) => `<tr><td>${sub}</td><td>${marks}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function loadNotices() {
+      const notices = SchoolDB.getNotices();
+      document.getElementById('stu-notices').innerHTML = notices.map(n => `
+        <div style="padding:0.85rem 0;border-bottom:1px solid var(--gray-100);">
+          <strong>${n.title}</strong><br>
+          <p style="margin:0.3rem 0;color:var(--gray-600);font-size:0.9rem;">${n.content}</p>
+          <small style="color:var(--gray-400);">${formatDate(n.date).full}</small>
+        </div>
+      `).join('');
+    }
+
+    function loadEvents() {
+      const events = SchoolDB.getEvents();
+      document.getElementById('stu-events').innerHTML = events.map(e => `
+        <div style="padding:0.85rem 0;border-bottom:1px solid var(--gray-100);">
+          <strong>${e.title}</strong><br>
+          <small style="color:var(--gray-500);">${formatDate(e.date).full} • ${e.time} • ${e.venue}</small>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

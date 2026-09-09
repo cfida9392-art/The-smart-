@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admissions | THE SMART MODERN PUBLIC SCHOOL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">SM</div>
+          <div class="logo-text">
+            <span class="school-name">THE SMART MODERN PUBLIC SCHOOL</span>
+            <span class="tagline">Learn Today, Lead Tomorrow</span>
+          </div>
+        </a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="academics.html">Academics</a></li>
+          <li><a href="teachers.html">Teachers</a></li>
+          <li><a href="admissions.html" class="active">Admissions</a></li>
+          <li><a href="notices.html">Notices</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="student-login.html" class="btn btn-sm btn-outline">Student</a>
+          <a href="teacher-login.html" class="btn btn-sm btn-secondary">Teacher</a>
+          <a href="admin-login.html" class="btn btn-sm btn-primary">Admin</a>
+        </div>
+        <button class="mobile-toggle"><i class="fas fa-bars"></i></button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Admissions</h1>
+      <p>Join THE SMART MODERN PUBLIC SCHOOL family</p>
+      <div class="breadcrumb"><a href="index.html">Home</a> / Admissions</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge">Process</span>
+        <h2>Admission Process</h2>
+        <p>Simple steps to secure a seat for your child.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card feature-card">
+          <div class="card-icon">1</div>
+          <h3>Inquiry & Visit</h3>
+          <p>Fill the inquiry form or visit the campus. Our admission team will guide you.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="card-icon">2</div>
+          <h3>Application Form</h3>
+          <p>Submit the online or offline application with required documents.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="card-icon">3</div>
+          <h3>Assessment</h3>
+          <p>Age-appropriate interaction / written assessment (for higher classes).</p>
+        </div>
+        <div class="card feature-card">
+          <div class="card-icon">4</div>
+          <h3>Confirmation</h3>
+          <p>On selection, complete fee payment and documentation to confirm admission.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--white);">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge">Apply</span>
+        <h2>Admission Inquiry Form</h2>
+      </div>
+      <div class="form-container" style="max-width:640px;">
+        <form id="admission-form">
+          <div class="form-group">
+            <label>Student Full Name *</label>
+            <input type="text" name="name" class="form-control" required placeholder="Enter student's full name">
+          </div>
+          <div class="form-group">
+            <label>Class Applying For *</label>
+            <select name="classApplied" class="form-control" required>
+              <option value="">Select Class</option>
+              <option>Class 1</option><option>Class 2</option><option>Class 3</option>
+              <option>Class 4</option><option>Class 5</option><option>Class 6</option>
+              <option>Class 7</option><option>Class 8</option><option>Class 9</option>
+              <option>Class 10</option><option>Class 11</option><option>Class 12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Parent / Guardian Name *</label>
+            <input type="text" name="parentName" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" name="phone" class="form-control" required placeholder="+1 555-0000">
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Message / Additional Info</label>
+            <textarea name="message" class="form-control" rows="3" placeholder="Any specific questions or notes"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-full btn-lg"><i class="fas fa-paper-plane"></i> Submit Application</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;">
+        <p>&copy; 2026 THE SMART MODERN PUBLIC SCHOOL. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById('admission-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = this;
+      const data = {
+        id: SchoolDB.generateId('ADM'),
+        name: form.name.value,
+        classApplied: form.classApplied.value,
+        parentName: form.parentName.value,
+        phone: form.phone.value,
+        email: form.email.value,
+        status: 'Pending',
+        date: new Date().toISOString().split('T')[0]
+      };
+      const admissions = SchoolDB.getAdmissions();
+      admissions.unshift(data);
+      SchoolDB.saveAdmissions(admissions);
+      showAlert(form, 'Application submitted successfully! Our team will contact you soon.', 'success');
+      form.reset();
+    });
+  </script>
+</body>
+</html>

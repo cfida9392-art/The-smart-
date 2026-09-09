@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | THE SMART MODERN PUBLIC SCHOOL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon" style="width:40px;height:40px;font-size:1rem;">SM</div>
+          <div class="logo-text">
+            <span class="school-name" style="font-size:0.85rem;">THE SMART MODERN</span>
+            <span class="tagline" style="font-size:0.65rem;">PUBLIC SCHOOL</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar">A</div>
+        <div class="user-info">
+          <h4 id="admin-name">Administrator</h4>
+          <span>Admin</span>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active" data-section="overview"><i class="fas fa-tachometer-alt"></i> Overview</a></li>
+        <li><a href="#" data-section="students"><i class="fas fa-user-graduate"></i> Students</a></li>
+        <li><a href="#" data-section="teachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</a></li>
+        <li><a href="#" data-section="classes"><i class="fas fa-school"></i> Classes</a></li>
+        <li><a href="#" data-section="attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+        <li><a href="#" data-section="notices"><i class="fas fa-bullhorn"></i> Notices</a></li>
+        <li><a href="#" data-section="events"><i class="fas fa-calendar-alt"></i> Events</a></li>
+        <li><a href="#" data-section="admissions"><i class="fas fa-file-alt"></i> Admissions</a></li>
+        <li><a href="#" data-section="gallery"><i class="fas fa-images"></i> Gallery</a></li>
+        <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> Settings</a></li>
+        <li><a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <h2 id="section-title">Dashboard Overview</h2>
+        <div>
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        </div>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Overview -->
+        <div id="section-overview" class="dashboard-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-students">0</h3>
+                <p>Total Students</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-teachers">0</h3>
+                <p>Total Teachers</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange"><i class="fas fa-school"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-classes">0</h3>
+                <p>Total Classes</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon purple"><i class="fas fa-file-alt"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-admissions">0</h3>
+                <p>Pending Admissions</p>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="panel">
+              <div class="panel-header"><h3>Recent Notices</h3></div>
+              <div class="panel-body" id="overview-notices"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><h3>Upcoming Events</h3></div>
+              <div class="panel-body" id="overview-events"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students -->
+        <div id="section-students" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Manage Students</h3>
+              <button class="btn btn-primary btn-sm" onclick="openAddStudent()"><i class="fas fa-plus"></i> Add Student</button>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table>
+                  <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Roll</th><th>Attendance</th><th>Fees</th><th>Actions</th></tr></thead>
+                  <tbody id="students-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teachers -->
+        <div id="section-teachers" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Manage Teachers</h3>
+              <button class="btn btn-primary btn-sm" onclick="openAddTeacher()"><i class="fas fa-plus"></i> Add Teacher</button>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table>
+                  <thead><tr><th>ID</th><th>Name</th><th>Subject</th><th>Email</th><th>Experience</th><th>Actions</th></tr></thead>
+                  <tbody id="teachers-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Classes -->
+        <div id="section-classes" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Manage Classes</h3></div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table>
+                  <thead><tr><th>Name</th><th>Section</th><th>Teacher</th><th>Students</th><th>Room</th></tr></thead>
+                  <tbody id="classes-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance -->
+        <div id="section-attendance" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Attendance Summary</h3></div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table>
+                  <thead><tr><th>Student</th><th>Class</th><th>Attendance %</th><th>Status</th></tr></thead>
+                  <tbody id="attendance-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notices -->
+        <div id="section-notices" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Publish Notices</h3>
+              <button class="btn btn-primary btn-sm" onclick="openAddNotice()"><i class="fas fa-plus"></i> Add Notice</button>
+            </div>
+            <div class="panel-body" id="admin-notices"></div>
+          </div>
+        </div>
+
+        <!-- Events -->
+        <div id="section-events" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>School Events</h3>
+              <button class="btn btn-primary btn-sm" onclick="openAddEvent()"><i class="fas fa-plus"></i> Add Event</button>
+            </div>
+            <div class="panel-body" id="admin-events"></div>
+          </div>
+        </div>
+
+        <!-- Admissions -->
+        <div id="section-admissions" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Admission Applications</h3></div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table>
+                  <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Parent</th><th>Phone</th><th>Status</th><th>Date</th></tr></thead>
+                  <tbody id="admissions-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gallery -->
+        <div id="section-gallery" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Gallery Management</h3></div>
+            <div class="panel-body">
+              <div class="gallery-grid" id="admin-gallery"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="section-settings" class="dashboard-section hidden">
+          <div class="panel">
+            <div class="panel-header"><h3>Change Admin Password</h3></div>
+            <div class="panel-body">
+              <form id="change-pass-form" style="max-width:400px;">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input type="password" name="oldPass" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" name="newPass" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Password</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="modal-student">
+    <div class="modal">
+      <div class="modal-header"><h3>Add Student</h3><button class="modal-close" onclick="closeModal('modal-student')">&times;</button></div>
+      <div class="modal-body">
+        <form id="add-student-form">
+          <div class="form-group"><label>Name</label><input name="name" class="form-control" required></div>
+          <div class="form-group"><label>Username</label><input name="username" class="form-control" required></div>
+          <div class="form-group"><label>Password</label><input name="password" type="password" class="form-control" required></div>
+          <div class="form-group"><label>Class</label><input name="class" class="form-control" placeholder="Class 10-A" required></div>
+          <div class="form-group"><label>Roll No</label><input name="rollNo" class="form-control" required></div>
+          <div class="form-group"><label>Parent Name</label><input name="parentName" class="form-control"></div>
+          <div class="form-group"><label>Phone</label><input name="phone" class="form-control"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-student')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveStudent()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Teacher Modal -->
+  <div class="modal-overlay" id="modal-teacher">
+    <div class="modal">
+      <div class="modal-header"><h3>Add Teacher</h3><button class="modal-close" onclick="closeModal('modal-teacher')">&times;</button></div>
+      <div class="modal-body">
+        <form id="add-teacher-form">
+          <div class="form-group"><label>Name</label><input name="name" class="form-control" required></div>
+          <div class="form-group"><label>Username</label><input name="username" class="form-control" required></div>
+          <div class="form-group"><label>Password</label><input name="password" type="password" class="form-control" required></div>
+          <div class="form-group"><label>Subject</label><input name="subject" class="form-control" required></div>
+          <div class="form-group"><label>Email</label><input name="email" type="email" class="form-control"></div>
+          <div class="form-group"><label>Qualification</label><input name="qualification" class="form-control"></div>
+          <div class="form-group"><label>Experience</label><input name="experience" class="form-control" placeholder="5 years"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-teacher')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTeacher()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Notice Modal -->
+  <div class="modal-overlay" id="modal-notice">
+    <div class="modal">
+      <div class="modal-header"><h3>Publish Notice</h3><button class="modal-close" onclick="closeModal('modal-notice')">&times;</button></div>
+      <div class="modal-body">
+        <form id="add-notice-form">
+          <div class="form-group"><label>Title</label><input name="title" class="form-control" required></div>
+          <div class="form-group"><label>Content</label><textarea name="content" class="form-control" rows="4" required></textarea></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-notice')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNotice()">Publish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Event Modal -->
+  <div class="modal-overlay" id="modal-event">
+    <div class="modal">
+      <div class="modal-header"><h3>Add Event</h3><button class="modal-close" onclick="closeModal('modal-event')">&times;</button></div>
+      <div class="modal-body">
+        <form id="add-event-form">
+          <div class="form-group"><label>Title</label><input name="title" class="form-control" required></div>
+          <div class="form-group"><label>Description</label><textarea name="description" class="form-control" rows="3" required></textarea></div>
+          <div class="form-group"><label>Date</label><input name="date" type="date" class="form-control" required></div>
+          <div class="form-group"><label>Time</label><input name="time" class="form-control" placeholder="10:00 AM"></div>
+          <div class="form-group"><label>Venue</label><input name="venue" class="form-control"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-event')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveEvent()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (!protectPage('admin')) throw new Error('Unauthorized');
+
+    const session = SchoolDB.getSession();
+    document.getElementById('admin-name').textContent = session.name || 'Admin';
+
+    // Navigation
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        const section = link.dataset.section;
+        document.querySelectorAll('.dashboard-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('section-' + section).classList.remove('hidden');
+        document.getElementById('section-title').textContent = link.textContent.trim();
+        loadSection(section);
+      });
+    });
+
+    function loadSection(section) {
+      if (section === 'overview') loadOverview();
+      if (section === 'students') loadStudents();
+      if (section === 'teachers') loadTeachers();
+      if (section === 'classes') loadClasses();
+      if (section === 'attendance') loadAttendance();
+      if (section === 'notices') loadNotices();
+      if (section === 'events') loadEvents();
+      if (section === 'admissions') loadAdmissions();
+      if (section === 'gallery') loadGallery();
+    }
+
+    function loadOverview() {
+      const students = SchoolDB.getStudents();
+      const teachers = SchoolDB.getTeachers();
+      const classes = SchoolDB.getClasses();
+      const admissions = SchoolDB.getAdmissions().filter(a => a.status === 'Pending' || a.status === 'Under Review');
+      document.getElementById('stat-students').textContent = students.length;
+      document.getElementById('stat-teachers').textContent = teachers.length;
+      document.getElementById('stat-classes').textContent = classes.length;
+      document.getElementById('stat-admissions').textContent = admissions.length;
+
+      const notices = SchoolDB.getNotices().slice(0, 4);
+      document.getElementById('overview-notices').innerHTML = notices.map(n => `
+        <div style="padding:0.75rem 0;border-bottom:1px solid var(--gray-100);">
+          <strong>${n.title}</strong><br><small style="color:var(--gray-500);">${formatDate(n.date).full}</small>
+        </div>
+      `).join('') || '<p class="empty-state">No notices</p>';
+
+      const events = SchoolDB.getEvents().slice(0, 4);
+      document.getElementById('overview-events').innerHTML = events.map(e => `
+        <div style="padding:0.75rem 0;border-bottom:1px solid var(--gray-100);">
+          <strong>${e.title}</strong><br><small style="color:var(--gray-500);">${formatDate(e.date).full} • ${e.venue}</small>
+        </div>
+      `).join('') || '<p class="empty-state">No events</p>';
+    }
+
+    function loadStudents() {
+      const students = SchoolDB.getStudents();
+      document.getElementById('students-tbody').innerHTML = students.map(s => `
+        <tr>
+          <td>${s.id}</td>
+          <td>${s.name}</td>
+          <td>${s.class}</td>
+          <td>${s.rollNo}</td>
+          <td>${s.attendance}%</td>
+          <td><span class="badge ${s.feesStatus === 'Paid' ? 'badge-success' : 'badge-warning'}">${s.feesStatus}</span></td>
+          <td class="action-btns">
+            <button class="btn-icon delete" onclick="deleteStudent('${s.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadTeachers() {
+      const teachers = SchoolDB.getTeachers();
+      document.getElementById('teachers-tbody').innerHTML = teachers.map(t => `
+        <tr>
+          <td>${t.id}</td>
+          <td>${t.name}</td>
+          <td>${t.subject}</td>
+          <td>${t.email || '-'}</td>
+          <td>${t.experience || '-'}</td>
+          <td class="action-btns">
+            <button class="btn-icon delete" onclick="deleteTeacher('${t.id}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadClasses() {
+      const classes = SchoolDB.getClasses();
+      document.getElementById('classes-tbody').innerHTML = classes.map(c => `
+        <tr><td>${c.name}</td><td>${c.section}</td><td>${c.teacher}</td><td>${c.students}</td><td>${c.room}</td></tr>
+      `).join('');
+    }
+
+    function loadAttendance() {
+      const students = SchoolDB.getStudents();
+      document.getElementById('attendance-tbody').innerHTML = students.map(s => `
+        <tr>
+          <td>${s.name}</td>
+          <td>${s.class}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <div class="progress" style="flex:1;max-width:100px;"><div class="progress-bar" style="width:${s.attendance}%"></div></div>
+              ${s.attendance}%
+            </div>
+          </td>
+          <td><span class="badge ${s.attendance >= 90 ? 'badge-success' : s.attendance >= 75 ? 'badge-warning' : 'badge-danger'}">${s.attendance >= 90 ? 'Excellent' : s.attendance >= 75 ? 'Good' : 'Low'}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function loadNotices() {
+      const notices = SchoolDB.getNotices();
+      document.getElementById('admin-notices').innerHTML = notices.map(n => `
+        <div class="notice-item" style="margin-bottom:0.75rem;">
+          <div class="notice-content" style="flex:1;">
+            <h4>${n.title}</h4>
+            <p>${n.content.substring(0, 120)}...</p>
+            <small>${formatDate(n.date).full}</small>
+          </div>
+          <button class="btn-icon delete" onclick="deleteNotice('${n.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function loadEvents() {
+      const events = SchoolDB.getEvents();
+      document.getElementById('admin-events').innerHTML = events.map(e => `
+        <div class="event-item" style="margin-bottom:0.75rem;">
+          <div class="event-content" style="flex:1;">
+            <h4>${e.title}</h4>
+            <p>${e.description.substring(0, 100)}...</p>
+            <small>${formatDate(e.date).full} • ${e.venue}</small>
+          </div>
+          <button class="btn-icon delete" onclick="deleteEvent('${e.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function loadAdmissions() {
+      const admissions = SchoolDB.getAdmissions();
+      document.getElementById('admissions-tbody').innerHTML = admissions.map(a => `
+        <tr>
+          <td>${a.id}</td>
+          <td>${a.name}</td>
+          <td>${a.classApplied}</td>
+          <td>${a.parentName}</td>
+          <td>${a.phone}</td>
+          <td><span class="badge ${a.status === 'Approved' ? 'badge-success' : a.status === 'Pending' ? 'badge-warning' : 'badge-info'}">${a.status}</span></td>
+          <td>${a.date}</td>
+        </tr>
+      `).join('');
+    }
+
+    function loadGallery() {
+      const gallery = SchoolDB.getGallery();
+      document.getElementById('admin-gallery').innerHTML = gallery.map(g => `
+        <div class="gallery-item" style="background:linear-gradient(135deg,#dbeafe,#e0f2fe);display:flex;align-items:center;justify-content:center;font-size:3rem;min-height:150px;">
+          ${g.emoji}
+          <div class="overlay"><span>${g.title}</span></div>
+        </div>
+      `).join('');
+    }
+
+    // CRUD
+    function openAddStudent() { openModal('modal-student'); }
+    function openAddTeacher() { openModal('modal-teacher'); }
+    function openAddNotice() { openModal('modal-notice'); }
+    function openAddEvent() { openModal('modal-event'); }
+
+    function saveStudent() {
+      const form = document.getElementById('add-student-form');
+      const students = SchoolDB.getStudents();
+      students.push({
+        id: SchoolDB.generateId('STU'),
+        username: form.username.value,
+        password: SchoolDB.hash(form.password.value),
+        role: 'student',
+        name: form.name.value,
+        class: form.class.value,
+        section: form.class.value.split('-')[1] || 'A',
+        rollNo: form.rollNo.value,
+        parentName: form.parentName.value,
+        phone: form.phone.value,
+        attendance: 100,
+        feesStatus: 'Pending',
+        photo: '👨‍🎓'
+      });
+      SchoolDB.saveStudents(students);
+      closeModal('modal-student');
+      form.reset();
+      loadStudents();
+      loadOverview();
+    }
+
+    function deleteStudent(id) {
+      if (!confirm('Delete this student?')) return;
+      let students = SchoolDB.getStudents().filter(s => s.id !== id);
+      SchoolDB.saveStudents(students);
+      loadStudents();
+      loadOverview();
+    }
+
+    function saveTeacher() {
+      const form = document.getElementById('add-teacher-form');
+      const teachers = SchoolDB.getTeachers();
+      teachers.push({
+        id: SchoolDB.generateId('TCH'),
+        username: form.username.value,
+        password: SchoolDB.hash(form.password.value),
+        role: 'teacher',
+        name: form.name.value,
+        subject: form.subject.value,
+        email: form.email.value,
+        qualification: form.qualification.value,
+        experience: form.experience.value,
+        classes: [],
+        photo: '👨‍🏫'
+      });
+      SchoolDB.saveTeachers(teachers);
+      closeModal('modal-teacher');
+      form.reset();
+      loadTeachers();
+      loadOverview();
+    }
+
+    function deleteTeacher(id) {
+      if (!confirm('Delete this teacher?')) return;
+      let teachers = SchoolDB.getTeachers().filter(t => t.id !== id);
+      SchoolDB.saveTeachers(teachers);
+      loadTeachers();
+      loadOverview();
+    }
+
+    function saveNotice() {
+      const form = document.getElementById('add-notice-form');
+      const notices = SchoolDB.getNotices();
+      notices.unshift({
+        id: SchoolDB.generateId('NTC'),
+        title: form.title.value,
+        content: form.content.value,
+        date: new Date().toISOString().split('T')[0],
+        author: 'Admin',
+        priority: 'medium'
+      });
+      SchoolDB.saveNotices(notices);
+      closeModal('modal-notice');
+      form.reset();
+      loadNotices();
+    }
+
+    function deleteNotice(id) {
+      if (!confirm('Delete this notice?')) return;
+      let notices = SchoolDB.getNotices().filter(n => n.id !== id);
+      SchoolDB.saveNotices(notices);
+      loadNotices();
+    }
+
+    function saveEvent() {
+      const form = document.getElementById('add-event-form');
+      const events = SchoolDB.getEvents();
+      events.unshift({
+        id: SchoolDB.generateId('EVT'),
+        title: form.title.value,
+        description: form.description.value,
+        date: form.date.value,
+        time: form.time.value,
+        venue: form.venue.value
+      });
+      SchoolDB.saveEvents(events);
+      closeModal('modal-event');
+      form.reset();
+      loadEvents();
+    }
+
+    function deleteEvent(id) {
+      if (!confirm('Delete this event?')) return;
+      let events = SchoolDB.getEvents().filter(e => e.id !== id);
+      SchoolDB.saveEvents(events);
+      loadEvents();
+    }
+
+    document.getElementById('change-pass-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const result = SchoolDB.changePassword('admin', null, this.oldPass.value, this.newPass.value);
+      showAlert(this, result.message, result.success ? 'success' : 'error');
+      if (result.success) this.reset();
+    });
+
+    loadOverview();
+  </script>
+</body>
+</html>
