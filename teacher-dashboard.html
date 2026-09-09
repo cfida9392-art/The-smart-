@@ -83,18 +83,55 @@
 
         <div id="section-attendance" class="dashboard-section hidden">
           <div class="panel">
-            <div class="panel-header"><h3>Attendance Management</h3></div>
+            <div class="panel-header">
+              <h3>📋 Attendance Sheet</h3>
+            </div>
             <div class="panel-body">
-              <p style="color:var(--gray-500);margin-bottom:1rem;">View and monitor student attendance for your classes.</p>
+              <!-- Filters -->
+              <div style="display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;align-items:flex-end;">
+                <div class="form-group" style="margin:0;min-width:180px;">
+                  <label>Select Class</label>
+                  <select id="att-class" class="form-control"></select>
+                </div>
+                <div class="form-group" style="margin:0;min-width:160px;">
+                  <label>Date</label>
+                  <input type="date" id="att-date" class="form-control">
+                </div>
+                <button class="btn btn-primary" onclick="loadAttendanceSheet()"><i class="fas fa-search"></i> Load Sheet</button>
+                <button class="btn btn-success" onclick="markAll('P')"><i class="fas fa-check-double"></i> All Present</button>
+              </div>
+
+              <!-- Summary badges -->
+              <div id="att-summary" style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;"></div>
+
+              <!-- Sheet -->
               <div class="table-responsive">
-                <table>
-                  <thead><tr><th>Student</th><th>Class</th><th>Attendance %</th><th>Status</th></tr></thead>
-                  <tbody id="att-list"></tbody>
+                <table id="attendance-sheet-table">
+                  <thead>
+                    <tr>
+                      <th style="width:50px;">#</th>
+                      <th>Roll No</th>
+                      <th>Student Name</th>
+                      <th style="width:120px;text-align:center;">Present</th>
+                      <th style="width:120px;text-align:center;">Absent</th>
+                      <th style="width:120px;text-align:center;">Leave</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="att-sheet-body">
+                    <tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:2rem;">Select Class & Date then click Load Sheet</td></tr>
+                  </tbody>
                 </table>
+              </div>
+
+              <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+                <button class="btn btn-primary btn-lg" onclick="saveAttendanceSheet()"><i class="fas fa-save"></i> Save Attendance</button>
+                <span id="att-save-msg" style="align-self:center;font-weight:600;"></span>
               </div>
             </div>
           </div>
         </div>
+
 
         <div id="section-homework" class="dashboard-section hidden">
           <div class="panel">
@@ -173,6 +210,17 @@
     document.getElementById('profile-phone').textContent = session.phone || '-';
     document.getElementById('profile-classes').textContent = (session.classes || []).join(', ') || '-';
 
+    // Fill class dropdown
+    const classSelect = document.getElementById('att-class');
+    (session.classes || []).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      classSelect.appendChild(opt);
+    });
+    // Set today's date
+    document.getElementById('att-date').value = new Date().toISOString().split('T')[0];
+
     document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -183,7 +231,8 @@
         document.getElementById('section-' + section).classList.remove('hidden');
         document.getElementById('section-title').textContent = link.textContent.trim();
         if (section === 'classes') loadClasses();
-        if (section === 'students' || section === 'attendance') loadStudents();
+        if (section === 'students') loadStudents();
+        if (section === 'attendance') { /* sheet ready */ }
         if (section === 'homework') loadHW();
         if (section === 'marks') loadMarks();
         if (section === 'notices') loadNotices();
@@ -212,14 +261,104 @@
         </tr>
       `).join('');
       document.getElementById('students-list').innerHTML = rows || '<tr><td colspan="5">No students found</td></tr>';
-      document.getElementById('att-list').innerHTML = students.map(s => `
-        <tr>
-          <td>${s.name}</td>
-          <td>${s.class}</td>
-          <td>${s.attendance}%</td>
-          <td><span class="badge ${s.attendance >= 90 ? 'badge-success' : s.attendance >= 75 ? 'badge-warning' : 'badge-danger'}">${s.attendance >= 90 ? 'Excellent' : s.attendance >= 75 ? 'Good' : 'Low'}</span></td>
-        </tr>
-      `).join('') || '<tr><td colspan="4">No data</td></tr>';
+    }
+
+    // ========== ATTENDANCE SHEET ==========
+    let currentSheetStudents = [];
+    let currentRecords = {}; // studentId -> "P"|"A"|"L"
+
+    function loadAttendanceSheet() {
+      const className = document.getElementById('att-class').value;
+      const date = document.getElementById('att-date').value;
+      if (!className || !date) {
+        alert('Please select Class and Date');
+        return;
+      }
+
+      currentSheetStudents = SchoolDB.getStudents().filter(s => s.class === className);
+      if (currentSheetStudents.length === 0) {
+        document.getElementById('att-sheet-body').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-400);">No students found in this class</td></tr>';
+        document.getElementById('att-summary').innerHTML = '';
+        return;
+      }
+
+      // Load existing records if any
+      const existing = SchoolDB.getAttendanceForClass(date, className);
+      currentRecords = existing ? { ...existing.records } : {};
+
+      // Default to Present if not marked
+      currentSheetStudents.forEach(s => {
+        if (!currentRecords[s.id]) currentRecords[s.id] = 'P';
+      });
+
+      renderAttendanceSheet();
+    }
+
+    function renderAttendanceSheet() {
+      let present = 0, absent = 0, leave = 0;
+
+      document.getElementById('att-sheet-body').innerHTML = currentSheetStudents.map((s, i) => {
+        const status = currentRecords[s.id] || 'P';
+        if (status === 'P') present++;
+        if (status === 'A') absent++;
+        if (status === 'L') leave++;
+
+        return `
+          <tr data-id="${s.id}">
+            <td>${i + 1}</td>
+            <td>${s.rollNo || '-'}</td>
+            <td><strong>${s.name}</strong></td>
+            <td style="text-align:center;">
+              <button class="att-btn ${status === 'P' ? 'active-p' : ''}" onclick="setStatus('${s.id}','P')" title="Present">P</button>
+            </td>
+            <td style="text-align:center;">
+              <button class="att-btn ${status === 'A' ? 'active-a' : ''}" onclick="setStatus('${s.id}','A')" title="Absent">A</button>
+            </td>
+            <td style="text-align:center;">
+              <button class="att-btn ${status === 'L' ? 'active-l' : ''}" onclick="setStatus('${s.id}','L')" title="Leave">L</button>
+            </td>
+            <td>
+              <span class="badge ${status === 'P' ? 'badge-success' : status === 'A' ? 'badge-danger' : 'badge-warning'}">
+                ${status === 'P' ? 'Present' : status === 'A' ? 'Absent' : 'Leave'}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('att-summary').innerHTML = `
+        <span class="badge badge-success" style="font-size:0.95rem;padding:0.5rem 1rem;">Present: ${present}</span>
+        <span class="badge badge-danger" style="font-size:0.95rem;padding:0.5rem 1rem;">Absent: ${absent}</span>
+        <span class="badge badge-warning" style="font-size:0.95rem;padding:0.5rem 1rem;">Leave: ${leave}</span>
+        <span class="badge badge-info" style="font-size:0.95rem;padding:0.5rem 1rem;">Total: ${currentSheetStudents.length}</span>
+      `;
+    }
+
+    function setStatus(studentId, status) {
+      currentRecords[studentId] = status;
+      renderAttendanceSheet();
+    }
+
+    function markAll(status) {
+      currentSheetStudents.forEach(s => {
+        currentRecords[s.id] = status;
+      });
+      renderAttendanceSheet();
+    }
+
+    function saveAttendanceSheet() {
+      const className = document.getElementById('att-class').value;
+      const date = document.getElementById('att-date').value;
+      if (!className || !date || currentSheetStudents.length === 0) {
+        alert('Please load the sheet first');
+        return;
+      }
+
+      SchoolDB.saveAttendanceForClass(date, className, currentRecords, session.name);
+      const msg = document.getElementById('att-save-msg');
+      msg.textContent = '✅ Attendance saved successfully!';
+      msg.style.color = 'var(--success)';
+      setTimeout(() => msg.textContent = '', 3000);
     }
 
     function loadHW() {
@@ -268,5 +407,41 @@
       loadHW();
     }
   </script>
+
+  <style>
+    .att-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .att-btn:hover {
+      transform: scale(1.08);
+    }
+    .att-btn.active-p {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.35);
+    }
+    .att-btn.active-a {
+      background: #ef4444;
+      color: white;
+      border-color: #ef4444;
+      box-shadow: 0 4px 12px rgba(239,68,68,0.35);
+    }
+    .att-btn.active-l {
+      background: #f59e0b;
+      color: white;
+      border-color: #f59e0b;
+      box-shadow: 0 4px 12px rgba(245,158,11,0.35);
+    }
+  </style>
+
 </body>
 </html>
