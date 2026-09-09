@@ -517,10 +517,86 @@ const SchoolDB = {
     return JSON.parse(localStorage.getItem('smps_timetable') || '{}');
   },
 
+  // ========== ATTENDANCE SYSTEM ==========
+  // Structure: { "2026-09-09_Class 10-A": { date, className, records: { studentId: "P"|"A"|"L" }, markedBy, markedAt } }
+  getAttendance() {
+    return JSON.parse(localStorage.getItem('smps_attendance') || '{}');
+  },
+  saveAttendance(data) {
+    localStorage.setItem('smps_attendance', JSON.stringify(data));
+  },
+
+  getAttendanceKey(date, className) {
+    return `${date}_${className}`;
+  },
+
+  getAttendanceForClass(date, className) {
+    const all = this.getAttendance();
+    const key = this.getAttendanceKey(date, className);
+    return all[key] || null;
+  },
+
+  saveAttendanceForClass(date, className, records, markedBy) {
+    const all = this.getAttendance();
+    const key = this.getAttendanceKey(date, className);
+    all[key] = {
+      date,
+      className,
+      records, // { studentId: "P" | "A" | "L" }
+      markedBy,
+      markedAt: new Date().toISOString()
+    };
+    this.saveAttendance(all);
+    this.updateStudentAttendancePercentages();
+    return true;
+  },
+
+  // Recalculate each student's overall attendance %
+  updateStudentAttendancePercentages() {
+    const all = this.getAttendance();
+    const students = this.getStudents();
+    const stats = {}; // studentId -> { present, total }
+
+    Object.values(all).forEach(day => {
+      if (!day.records) return;
+      Object.entries(day.records).forEach(([stuId, status]) => {
+        if (!stats[stuId]) stats[stuId] = { present: 0, total: 0 };
+        stats[stuId].total += 1;
+        if (status === 'P') stats[stuId].present += 1;
+        // Leave (L) counts as neither present nor absent for percentage (or count as present - common practice)
+        // Here we count Leave as present for percentage (school-friendly)
+        if (status === 'L') stats[stuId].present += 1;
+      });
+    });
+
+    students.forEach(s => {
+      if (stats[s.id] && stats[s.id].total > 0) {
+        s.attendance = Math.round((stats[s.id].present / stats[s.id].total) * 100);
+      }
+    });
+    this.saveStudents(students);
+  },
+
+  getStudentAttendanceHistory(studentId) {
+    const all = this.getAttendance();
+    const history = [];
+    Object.values(all).forEach(day => {
+      if (day.records && day.records[studentId]) {
+        history.push({
+          date: day.date,
+          className: day.className,
+          status: day.records[studentId]
+        });
+      }
+    });
+    return history.sort((a, b) => b.date.localeCompare(a.date));
+  },
+
   // CRUD helpers
   generateId(prefix) {
     return prefix + Date.now().toString(36).toUpperCase().slice(-6);
   },
+
 
   changePassword(role, userId, oldPass, newPass) {
     const hashedOld = this.hash(oldPass);
